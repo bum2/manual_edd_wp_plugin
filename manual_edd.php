@@ -9,18 +9,19 @@ Author URI:
 */
 
 //Language
-load_plugin_textdomain( 'manual_wp_plugin', false,  dirname(plugin_basename(__FILE__)) . '/languages/' );
+load_plugin_textdomain( 'manual_edd_wp_plugin', false,  dirname(plugin_basename(__FILE__)) . '/languages/' );
 
+//Load post fields management
+require_once ( __DIR__ . '/manual_edd_wp_post.php');
 
-// registers the gateway
+//Registers the gateway
 function manual_wp_edd_register_gateway( $gateways ) {
-	$gateways['manual_gateway'] = array( 'admin_label' => 'Manual', 'checkout_label' => __( 'Manual', 'manual_wp_plugin' ) );
+	$gateways['manual_gateway'] = array( 'admin_label' => 'Manual', 'checkout_label' => __( 'Manual', 'manual_edd_wp_plugin' ) );
 	return $gateways;
 }
 add_filter( 'edd_payment_gateways', 'manual_wp_edd_register_gateway' );
 
-
-// pre purchase form
+//Pre purchase form
 function edd_manual_gateway_cc_form() {
 	
 	$output = '<div>';			
@@ -83,57 +84,57 @@ function manual_wp_edd_add_settings ( $settings ) {
 	$manual_gateway_settings = array(
 		array(
 			'id' => 'manual_gateway_settings',
-			'name' => '<strong>' . __( 'settings_tittle', 'manual_wp_plugin' ) . '</strong>',
-			'desc' => __( 'settings_tittle_desc', 'manual_wp_plugin' ),
+			'name' => '<strong>' . __( 'settings_tittle', 'manual_edd_wp_plugin' ) . '</strong>',
+			'desc' => __( 'settings_tittle_desc', 'manual_edd_wp_plugin' ),
 			'type' => 'header'
 		),
 		array(
 			'id' => 'mgs_platform_IBAN',
-			'name' => __( 'platform_iban', 'manual_wp_plugin' ),
-			'desc' => __( 'platform_iban_desc', 'manual_wp_plugin' ),
+			'name' => __( 'platform_iban', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'platform_iban_desc', 'manual_edd_wp_plugin' ),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'mgs_platform_BIN',
-			'name' => __( 'platform_bin', 'manual_wp_plugin' ),
-			'desc' => __( 'platform_bin_desc', 'manual_wp_plugin' ),
+			'name' => __( 'platform_bin', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'platform_bin_desc', 'manual_edd_wp_plugin' ),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'mgs_one_or_multiple_IBAN',
-			'name' => __( 'one_multiple_accounts', 'manual_wp_plugin' ),
-			'desc' => __( 'one_multiple_accounts_desc', 'manual_wp_plugin' ),
+			'name' => __( 'one_multiple_accounts', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'one_multiple_accounts_desc', 'manual_edd_wp_plugin' ),
 			'type' => 'select',
-			'options' => array(1 => 'ONE'), #array(1 => 'ONE', 2 => 'MULTIPLE')
+			'options' => array(1 => 'ONE', 2 => 'MULTIPLE'),
 			'std'  => 1
 		),
 		array(
 			'id' => 'mgs_transfer_info',
-			'name' => __( 'transfer_info', 'manual_wp_plugin' ),
-			'desc' => __( 'transfer_info_desc', 'manual_wp_plugin' ),
+			'name' => __( 'transfer_info', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'transfer_info_desc', 'manual_edd_wp_plugin' ),
 			'type' => 'rich_editor'
 		),
 		array(
 			'id' => 'mgs_from_email',
-			'name' => __( 'from_email', 'manual_wp_plugin' ),
-			'desc' => __( 'from_email_desc', 'manual_wp_plugin' ),
+			'name' => __( 'from_email', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'from_email_desc', 'manual_edd_wp_plugin' ),
 			'type' => 'text',
 			'size' => 'regular',
 			'std'  => get_bloginfo( 'admin_email' )
 		),
 		array(
 			'id' => 'mgs_subject_mail',
-			'name' => __( 'subject_mail', 'manual_wp_plugin' ),
-			'desc' => __( 'subject_mail_desc', 'manual_wp_plugin' )  . '<br/>' . edd_get_emails_tags_list(),
+			'name' => __( 'subject_mail', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'subject_mail_desc', 'manual_edd_wp_plugin' )  . '<br/>' . edd_get_emails_tags_list(),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'mgs_body_mail',
-			'name' => __( 'body_mail', 'manual_wp_plugin' ),
-			'desc' => __('body_mail_desc', 'manual_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
+			'name' => __( 'body_mail', 'manual_edd_wp_plugin' ),
+			'desc' => __('body_mail_desc', 'manual_edd_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
 			'type' => 'rich_editor',
 		),
 
@@ -150,8 +151,9 @@ function edd_email_tag_IBAN( $payment_id ) {
 	if ( $edd_options['mgs_one_or_multiple_IBAN'] == 1 ) {
 		$IBAN = $edd_options['mgs_platform_IBAN'];
 	} else {
-		$payment_data = edd_get_payment_meta( $payment_id );
-		//read post data get_post ($payment_data['download'][0]['id'])
+		$downloads = edd_get_payment_meta_cart_details( $payment_id );
+		$post_id = $downloads[0]['id'];
+		$IBAN = get_post_meta( $post_id, 'manual_edd_wp_postIBAN', true );
 	}
 	return $IBAN;
 
@@ -160,10 +162,11 @@ function edd_email_tag_BIC( $payment_id ) {
 
 	global $edd_options;
 	if ( $edd_options['mgs_one_or_multiple_IBAN'] == 1 ) {
-		$IBAN = $edd_options['mgs_platform_BIC'];
+		$BIC = $edd_options['mgs_platform_BIC'];
 	} else {
-		$payment_data = edd_get_payment_meta( $payment_id );
-		//read post data get_post ($payment_data['download'][0]['id'])
+		$downloads = edd_get_payment_meta_cart_details( $payment_id );
+		$post_id = $downloads[0]['id'];
+		$BIC = get_post_meta( $post_id, 'manual_edd_wp_postBIC', true );
 	}
 	return $BIC;
 
@@ -175,12 +178,12 @@ function manual_edd_setup_email_tags() {
 	$email_tags = array(
 		array(
 			'tag'         => 'IBAN',
-			'description' => __( 'preconfigured_IBAN', 'manual_wp_plugin' ),
+			'description' => __( 'preconfigured_IBAN', 'manual_edd_wp_plugin' ),
 			'function'    => 'edd_email_tag_IBAN'
 		),
 		array(
 			'tag'         => 'BIC',
-			'description' => __( 'preconfigured_BIC', 'manual_wp_plugin' ),
+			'description' => __( 'preconfigured_BIC', 'manual_edd_wp_plugin' ),
 			'function'    => 'edd_email_tag_BIC'
 		)
 	);
