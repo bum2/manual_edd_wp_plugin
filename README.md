@@ -1,6 +1,6 @@
 manual_wp_edd_plugin
 ==================
-Easy Digital Downloads - Manual Purchase Gateway (100% compabtible with Fundify Astoundify)
+Easy Digital Downloads - Manual Purchase Gateway (designed to join Fundify Astoundify)
 
 Description 
 --------------
