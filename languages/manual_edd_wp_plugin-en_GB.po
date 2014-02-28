@@ -18,13 +18,13 @@ msgid "settings_tittle_desc"
 msgstr "Configure the gateway settings"
 
 msgid "platform_iban"
-msgstr "Platform IBAN"
+msgstr "IBAN"
 
 msgid "platform_iban_desc"
 msgstr "Enter your International Bank Account Number"
 
 msgid "platform_bin"
-msgstr "Platform BIN"
+msgstr "BIN"
 
 msgid "platform_bin_desc"
 msgstr "Enter your Bank International Number"

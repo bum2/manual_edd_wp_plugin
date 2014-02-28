@@ -1,63 +1,139 @@
 <?php
 
+function text_callback ( $args, $post_id ) {
+	$value = get_post_meta( $post_id, $args['id'], true );
+	if ( $value != "" ) {
+		$value = get_post_meta( $post_id, $args['id'], true );
+	}else{
+		$value = isset( $args['std'] ) ? $args['std'] : '';
+	}
+
+	$output = "<tr valign='top'> \n".
+		" <th scope='row'> " . $args['name'] . " </th> \n" .
+		" <td><input type='text' class='regular-text' id='" . $args['id'] . "'" .
+		" name='" . $args['id'] . "' value='" .  $value   . "' />\n" .
+		" <label for='" . $name . "'> " . $args['desc'] . "</label>" .
+		"</td></tr>";
+
+	return $output;
+}
+
+function rich_editor_callback ( $args, $post_id ) {
+	$value = get_post_meta( $post_id, $args['id'], true );
+	if ( $value != "" ) {
+		$value = get_post_meta( $post_id, $args['id'], true );
+	}else{
+		$value = isset( $args['std'] ) ? $args['std'] : '';
+	}
+	$output = "<tr valign='top'> \n".
+		" <th scope='row'> " . $args['name'] . " </th> \n" .
+		" <td>";
+		ob_start();
+		wp_editor( stripslashes( $value ) , $args['id'], array( 'textarea_name' => $args['id'] ) );
+	$output .= ob_get_clean();
+
+	$output .= " <label for='" . $name . "'> " . $args['desc'] . "</label>" .
+		"</td></tr>\n";
+
+	return $output;
+}
+
+
 /**
- * Updates bank_data when saving post
+ * Updates when saving post
  *
  */
-function manual_edd_wp_bank_account_save( $post_id ) {
+function manual_edd_wp_post_save( $post_id ) {
+
 	if ( ! isset( $_POST['post_type']) || 'download' !== $_POST['post_type'] ) return;
 	if ( ! current_user_can( 'edit_post', $post_id ) ) return $post_id;
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return $post_id;
 
-	if ( isset( $_REQUEST['manual_edd_wp_postIBAN'] ) ) {
-		update_post_meta( $post_id, 'manual_edd_wp_postIBAN', strip_tags( stripslashes( $_REQUEST['manual_edd_wp_postIBAN'] ) ) );
-	}
-	if ( isset( $_REQUEST['manual_edd_wp_postBIC'] ) ) {
-		update_post_meta( $post_id, 'manual_edd_wp_postBIC', strip_tags( stripslashes( $_REQUEST['manual_edd_wp_postBIC'] ) ) );
+	$fields = manual_wp_edd_fields();
+	
+	foreach ($fields as $field) {
+		update_post_meta( $post_id, $field['id'],  $_REQUEST[$field['id']] );	
 	}
 }
-add_action( 'save_post', 'manual_edd_wp_bank_account_save' );
+add_action( 'save_post', 'manual_edd_wp_post_save' );
 
 
 /**
- * Dispaly bank_data sidebar metabox in saving post
+ * Display sidebar metabox in saving post
  *
  */
 function manual_edd_wp_print_meta_box ( $post ) {
 
-
 	if ( get_post_type( $post->ID ) != 'download' ) return;
 
-	$IBAN = get_post_meta( $post->ID, 'manual_edd_wp_postIBAN', true );
-	$BIN =  get_post_meta( $post->ID, 'manual_edd_wp_postBIC', true );
-
 	?>
-	<fieldset class="inline-edit-col-left">
-		<div id="manual_edd_wp_bank_account" class="inline-edit-col">			
-			<label>
-				<span class="title"><?php _e( 'post_IBAN', 'manual_edd_wp_plugin' ); ?></span>
-				<span class="input-text-wrap">
-					<input type="text" name="manual_edd_wp_postIBAN" class="text" value ="<?php echo $IBAN ?>"/>
-				</span>
-			</label>
-			<br class="clear" />
-			<label>
-				<span class="title"><?php _e( 'post_BIC', 'manual_edd_wp_plugin' ); ?></span>
-				<span class="input-text-wrap">
-					<input type="text" name="manual_edd_wp_postBIC" class="text" value ="<?php echo $BIN ?>"/>
-				</span>
-			</label>
-			<br class="clear" />
-		</div>
-	</fieldset>
+	<div class="wrap">
+		<div id="tab_container">	
+			<table class="form-table">						
+				<?php
+					$fields = manual_wp_edd_fields();
+					foreach ($fields as $field) {		
+						if ( $field['type'] == 'text'){
+							echo text_callback( $field, $post->ID );
+						}elseif ( $field['type'] == 'rich_editor' ) {
+							echo rich_editor_callback( $field, $post->ID ) ;
+						}
+					}
+				?>
+					 
+			</table>				
+		</div><!-- #tab_container-->
+	</div><!-- .wrap -->
 	<?php
-
 }
 
 function manual_edd_wp_show_post_fields ( $post) { 
 
-	add_meta_box( $post->ID, __( "bank_account_tittle", 'manual_edd_wp_plugin'), "manual_edd_wp_print_meta_box", 'download', 'side', 'high');
+	add_meta_box( $post->ID, __( "settings_tittle", 'manual_edd_wp_plugin'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
 
 }
-
 add_action( 'submitpost_box', 'manual_edd_wp_show_post_fields' );
+
+function manual_wp_edd_fields () {
+
+	$manual_gateway_settings = array(
+		array(
+			'id' => 'manual_edd_wp_post_IBAN',
+			'name' => __( 'platform_iban', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'platform_iban_desc', 'manual_edd_wp_plugin' ),
+			'type' => 'text',
+			'size' => 'regular'
+		),
+		array(
+			'id' => 'manual_edd_wp_post_BIN',
+			'name' => __( 'platform_bin', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'platform_bin_desc', 'manual_edd_wp_plugin' ),
+			'type' => 'text',
+			'size' => 'regular'
+		),
+		array(
+			'id' => 'manual_edd_wp_post_from_email',
+			'name' => __( 'from_email', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'from_email_desc', 'manual_edd_wp_plugin' ),
+			'type' => 'text',
+			'size' => 'regular',
+			'std'  => get_bloginfo( 'admin_email' )
+		),
+		array(
+			'id' => 'manual_edd_wp_post_subject_mail',
+			'name' => __( 'subject_mail', 'manual_edd_wp_plugin' ),
+			'desc' => __( 'subject_mail_desc', 'manual_edd_wp_plugin' )  . '<br/>' . edd_get_emails_tags_list(),
+			'type' => 'text',
+			'size' => 'regular'
+		),
+		array(
+			'id' => 'manual_edd_wp_post_body_mail',
+			'name' => __( 'body_mail', 'manual_edd_wp_plugin' ),
+			'desc' => __('body_mail_desc', 'manual_edd_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
+			'type' => 'rich_editor',
+		),
+
+	);
+
+	return $manual_gateway_settings;
+}

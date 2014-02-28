@@ -153,7 +153,7 @@ function edd_email_tag_IBAN( $payment_id ) {
 	} else {
 		$downloads = edd_get_payment_meta_cart_details( $payment_id );
 		$post_id = $downloads[0]['id'];
-		$IBAN = get_post_meta( $post_id, 'manual_edd_wp_postIBAN', true );
+		$IBAN = get_post_meta( $post_id, 'manual_edd_wp_post_IBAN', true );
 	}
 	return $IBAN;
 
@@ -166,7 +166,7 @@ function edd_email_tag_BIC( $payment_id ) {
 	} else {
 		$downloads = edd_get_payment_meta_cart_details( $payment_id );
 		$post_id = $downloads[0]['id'];
-		$BIC = get_post_meta( $post_id, 'manual_edd_wp_postBIC', true );
+		$BIC = get_post_meta( $post_id, 'manual_edd_wp_post_BIN', true );
 	}
 	return $BIC;
 
@@ -208,7 +208,7 @@ function manual_email_purchase_order ( $payment_id ) {
 	$payment_data = edd_get_payment_meta( $payment_id );
 	$user_id      = edd_get_payment_user_id( $payment_id );
 	$user_info    = maybe_unserialize( $payment_data['user_info'] );
-	$email        = edd_get_payment_user_email( $payment_id );
+	$to           = edd_get_payment_user_email( $payment_id );
 
 	if ( isset( $user_id ) && $user_id > 0 ) {
 		$user_data = get_userdata($user_id);
@@ -221,25 +221,39 @@ function manual_email_purchase_order ( $payment_id ) {
 
 	$message = edd_get_email_body_header();
 
-	$email = stripslashes( $edd_options['mgs_body_mail'] );
-	$message .= edd_do_email_tags( $email, $payment_id );
+	
+	if ( $edd_options['mgs_one_or_multiple_IBAN'] == 1 ) {
+		$email = stripslashes( $edd_options['mgs_body_mail'] );
+		$from_email = isset( $edd_options['mgs_from_email'] ) ? $edd_options['mgs_from_email'] : get_option('admin_email');
+		$subject = wp_strip_all_tags( $edd_options['mgs_subject_mail'], true );	
+	} else {
+		$downloads = edd_get_payment_meta_cart_details( $payment_id );
+		$post_id = $downloads[0]['id'];
+		$email = stripslashes (get_post_meta( $post_id, 'manual_edd_wp_post_body_mail', true ));
+		$from_email = get_post_meta( $post_id, 'manual_edd_wp_post_from_email', true );
+		$subject = wp_strip_all_tags(get_post_meta( $post_id, 'manual_edd_wp_post_subject_mail', true ));
+	}
 
+	
+	$message .= edd_do_email_tags( $email, $payment_id );
 	$message .= edd_get_email_body_footer();
 
 	$from_name = get_bloginfo('name');
-	$from_email = isset( $edd_options['mgs_from_email'] ) ? $edd_options['mgs_from_email'] : get_option('admin_email');
-
-	$subject = wp_strip_all_tags( $edd_options['mgs_subject_mail'], true );	
+	
 	$subject = edd_do_email_tags( $subject, $payment_id );
 
 	$headers = "From: " . stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) . " <$from_email>\r\n";
 	$headers .= "Reply-To: ". $from_email . "\r\n";
-	//$headers .= "MIME-Version: 1.0\r\n";
+	$headers .= "MIME-Version: 1.0\r\n";
 	$headers .= "Content-Type: text/html; charset=utf-8\r\n";
 	$headers = apply_filters( 'edd_receipt_headers', $headers, $payment_id, $payment_data );
 
 	if ( apply_filters( 'edd_email_purchase_receipt', true ) ) {
-		wp_mail( $email, $subject, $message, $headers, $attachments );
+		wp_mail( $to, $subject, $message, $headers, $attachments );
 	}
+var_dump($from_email);
+var_dump($to);
+var_dump($subject);
+	var_dump($message);exit();
 	
 }
