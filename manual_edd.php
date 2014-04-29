@@ -251,9 +251,5 @@ function manual_email_purchase_order ( $payment_id ) {
 	if ( apply_filters( 'edd_email_purchase_receipt', true ) ) {
 		wp_mail( $to, $subject, $message, $headers, $attachments );
 	}
-var_dump($from_email);
-var_dump($to);
-var_dump($subject);
-	var_dump($message);exit();
-	
+
 }
