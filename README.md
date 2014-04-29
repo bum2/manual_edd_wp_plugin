@@ -27,3 +27,7 @@ Notice
 --------------
 You can use this plugin for literal manual purchases just adding some writing in the information mail. Once you receive the payment proceed the flow as explained.
 
+Contribute
+--------------
+@BTC 1DNxbBeExzv7JvXgL6Up5BSUvuY4gE8q4A
+
