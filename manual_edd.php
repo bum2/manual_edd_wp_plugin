@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Easy Digital Downloads - Manual Purchase Gateway
-Plugin URL: 
-Description: A manual (transfers) gateway for Easy Digital Downloads
-Version: 0.1
-Author: Hackafou
-Author URI: 
+Plugin URL:
+Description: A manual 'wire transfer' gateway for Easy Digital Downloads by Hackafou, adapted by Bumbum to meet getfaircoin.net requirements.
+Version: 0.1.1
+Author: Bumbum
+Author URI: https://github.com/bum2
 */
 
 //Language
@@ -16,30 +16,30 @@ require_once ( __DIR__ . '/manual_edd_wp_post.php');
 
 //Registers the gateway
 function manual_wp_edd_register_gateway( $gateways ) {
-	$gateways['manual_gateway'] = array( 'admin_label' => 'Manual', 'checkout_label' => __( 'Manual', 'manual_edd_wp_plugin' ) );
+	$gateways['transfer'] = array( 'admin_label' => 'WireTransfer (manual)', 'checkout_label' => __( 'Wire Transfer', 'manual_edd_wp_plugin' ) );
 	return $gateways;
 }
 add_filter( 'edd_payment_gateways', 'manual_wp_edd_register_gateway' );
 
 //Pre purchase form
 function edd_manual_gateway_cc_form() {
-	
-	$output = '<div>';			
+
+	$output = '<div>';
 
 		global $edd_options;
 		$output .= $edd_options['mgs_transfer_info'];
-	
+
 	$output .= "</div>";
 
 	echo $output;
-	
+
 }
-add_action('edd_manual_gateway_cc_form', 'edd_manual_gateway_cc_form');
+add_action('edd_transfer_cc_form', 'edd_manual_gateway_cc_form');
 
 
 // processes the payment
-function manual_wp_edd_process_payment( $purchase_data ) {	
-	
+function manual_wp_edd_process_payment( $purchase_data ) {
+
 	// check for any stored errors
 	$errors = edd_get_errors();
 	if ( ! $errors ) {
@@ -64,7 +64,7 @@ function manual_wp_edd_process_payment( $purchase_data ) {
 		// send email with payment info
 		manual_email_purchase_order( $payment );
 
-		edd_send_to_success_page();		
+		edd_send_to_success_page();
 
 	} else {
 		$fail = true; // errors were detected
@@ -72,10 +72,11 @@ function manual_wp_edd_process_payment( $purchase_data ) {
 
 	if ( $fail !== false ) {
 		// if errors are present, send the user back to the purchase page so they can be corrected
-		edd_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['edd-gateway'] );
+		//edd_send_back_to_checkout( '?payment-mode=' . $purchase_data['post_data']['edd-gateway'] );
+		edd_send_back_to_checkout( '/checkout' );
 	}
 }
-add_action( 'edd_gateway_manual_gateway', 'manual_wp_edd_process_payment' );
+add_action( 'edd_gateway_transfer', 'manual_wp_edd_process_payment' );
 
 
 // adds the settings to the Payment Gateways section
@@ -84,8 +85,8 @@ function manual_wp_edd_add_settings ( $settings ) {
 	$manual_gateway_settings = array(
 		array(
 			'id' => 'manual_gateway_settings',
-			'name' => '<strong>' . __( 'settings_tittle', 'manual_edd_wp_plugin' ) . '</strong>',
-			'desc' => __( 'settings_tittle_desc', 'manual_edd_wp_plugin' ),
+			'name' => '<strong>' . __( 'Wire Transfer Settings', 'manual_edd_wp_plugin' ) . '</strong>',
+			'desc' => __( 'Settings to manage the manual payment gateway via wire transfer', 'manual_edd_wp_plugin' ),
 			'type' => 'header'
 		),
 		array(
@@ -200,7 +201,7 @@ function manual_edd_setup_email_tags() {
 add_action( 'edd_add_email_tags', 'manual_edd_setup_email_tags' );
 
 
-//Sent transfer intructions
+//Sent transfer instructions
 function manual_email_purchase_order ( $payment_id ) {
 
 	global $edd_options;
@@ -221,11 +222,11 @@ function manual_email_purchase_order ( $payment_id ) {
 
 	$message = edd_get_email_body_header();
 
-	
+
 	if ( $edd_options['mgs_one_or_multiple_IBAN'] == 1 ) {
 		$email = stripslashes( $edd_options['mgs_body_mail'] );
 		$from_email = isset( $edd_options['mgs_from_email'] ) ? $edd_options['mgs_from_email'] : get_option('admin_email');
-		$subject = wp_strip_all_tags( $edd_options['mgs_subject_mail'], true );	
+		$subject = wp_strip_all_tags( $edd_options['mgs_subject_mail'], true );
 	} else {
 		$downloads = edd_get_payment_meta_cart_details( $payment_id );
 		$post_id = $downloads[0]['id'];
@@ -234,12 +235,12 @@ function manual_email_purchase_order ( $payment_id ) {
 		$subject = wp_strip_all_tags(get_post_meta( $post_id, 'manual_edd_wp_post_subject_mail', true ));
 	}
 
-	
+
 	$message .= edd_do_email_tags( $email, $payment_id );
 	$message .= edd_get_email_body_footer();
 
 	$from_name = get_bloginfo('name');
-	
+
 	$subject = edd_do_email_tags( $subject, $payment_id );
 
 	$headers = "From: " . stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) . " <$from_email>\r\n";
@@ -253,3 +254,21 @@ function manual_email_purchase_order ( $payment_id ) {
 	}
 
 }
+
+//function edd_manual_payment_receipt_before($payment){
+//  echo _e("<p>Thanks! Your purchase order is registered. Here are the receipt details, so you can save or print them, but you'll also receive this information by email:<br /></p>", 'manual_edd_wp_plugin');
+//}
+//add_action('edd_payment_receipt_before', 'edd_manual_payment_receipt_before');
+
+function edd_manual_payment_receipt_after($payment){
+  if( edd_get_payment_gateway( $payment->ID ) == 'transfer'){
+    $payment_data = edd_get_payment_meta( $payment->ID );
+    $downloads = edd_get_payment_meta_cart_details( $payment->ID );
+    $post_id = $downloads[0]['id'];
+    $message = stripslashes ( get_post_meta( $post_id, 'manual_edd_wp_post_receipt', true ));
+    $message = edd_do_email_tags( $message, $payment->ID );
+    //$message = edd_get_payment_gateway( $payment->ID );
+    echo $message;
+  }
+}
+add_action('edd_payment_receipt_after_table', 'edd_manual_payment_receipt_after');

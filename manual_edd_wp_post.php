@@ -50,9 +50,9 @@ function manual_edd_wp_post_save( $post_id ) {
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return $post_id;
 
 	$fields = manual_wp_edd_fields();
-	
+
 	foreach ($fields as $field) {
-		update_post_meta( $post_id, $field['id'],  $_REQUEST[$field['id']] );	
+		update_post_meta( $post_id, $field['id'],  $_REQUEST[$field['id']] );
 	}
 }
 add_action( 'save_post', 'manual_edd_wp_post_save' );
@@ -68,11 +68,11 @@ function manual_edd_wp_print_meta_box ( $post ) {
 
 	?>
 	<div class="wrap">
-		<div id="tab_container">	
-			<table class="form-table">						
+		<div id="tab_container">
+			<table class="form-table">
 				<?php
 					$fields = manual_wp_edd_fields();
-					foreach ($fields as $field) {		
+					foreach ($fields as $field) {
 						if ( $field['type'] == 'text'){
 							echo text_callback( $field, $post->ID );
 						}elseif ( $field['type'] == 'rich_editor' ) {
@@ -80,16 +80,16 @@ function manual_edd_wp_print_meta_box ( $post ) {
 						}
 					}
 				?>
-					 
-			</table>				
+
+			</table>
 		</div><!-- #tab_container-->
 	</div><!-- .wrap -->
 	<?php
 }
 
-function manual_edd_wp_show_post_fields ( $post) { 
+function manual_edd_wp_show_post_fields ( $post) {
 
-	add_meta_box( $post->ID, __( "settings_tittle", 'manual_edd_wp_plugin'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
+	add_meta_box( $post->ID, __( "Manual Transfer Settings", 'manual_edd_wp_plugin'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
 
 }
 add_action( 'submitpost_box', 'manual_edd_wp_show_post_fields' );
@@ -122,7 +122,7 @@ function manual_wp_edd_fields () {
 		array(
 			'id' => 'manual_edd_wp_post_subject_mail',
 			'name' => __( 'subject_mail', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'subject_mail_desc', 'manual_edd_wp_plugin' )  . '<br/>' . edd_get_emails_tags_list(),
+			'desc' => __( 'subject_mail_desc', 'manual_edd_wp_plugin' ),//  . '<br/>' . edd_get_emails_tags_list(),
 			'type' => 'text',
 			'size' => 'regular'
 		),
@@ -132,7 +132,14 @@ function manual_wp_edd_fields () {
 			'desc' => __('body_mail_desc', 'manual_edd_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
 			'type' => 'rich_editor',
 		),
-
+		// bumbum
+		array(
+			'id' => 'manual_edd_wp_post_receipt',
+			'name' => __( 'transfer_receipt', 'manual_edd_wp_plugin' ),
+			'desc' => __('transfer_receipt_desc', 'manual_edd_wp_plugin'),// . '<br/>' . edd_get_emails_tags_list()  ,
+			'type' => 'rich_editor',
+		),
+		//
 	);
 
 	return $manual_gateway_settings;
