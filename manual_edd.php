@@ -202,7 +202,7 @@ add_action( 'edd_add_email_tags', 'manual_edd_setup_email_tags' );
 
 
 //Sent transfer instructions
-function manual_email_purchase_order ( $payment_id ) {
+function manual_email_purchase_order ( $payment_id, $admin_notice = true ) {
 
 	global $edd_options;
 
@@ -253,6 +253,9 @@ function manual_email_purchase_order ( $payment_id ) {
 		wp_mail( $to, $subject, $message, $headers, $attachments );
 	}
 
+	if ( $admin_notice && ! edd_admin_notices_disabled( $payment_id ) ) {
+		do_action( 'edd_admin_sale_notice', $payment_id, $payment_data );
+	}
 }
 
 //function edd_manual_payment_receipt_before($payment){

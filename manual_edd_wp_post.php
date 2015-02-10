@@ -111,6 +111,14 @@ function manual_wp_edd_fields () {
 			'type' => 'text',
 			'size' => 'regular'
 		),
+		// bumbum
+		array(
+			'id' => 'manual_edd_wp_post_receipt',
+			'name' => __( 'transfer_receipt', 'manual_edd_wp_plugin' ),
+			'desc' => __('transfer_receipt_desc', 'manual_edd_wp_plugin'),// . '<br/>' . edd_get_emails_tags_list()  ,
+			'type' => 'rich_editor',
+		),
+		//
 		array(
 			'id' => 'manual_edd_wp_post_from_email',
 			'name' => __( 'from_email', 'manual_edd_wp_plugin' ),
@@ -132,14 +140,6 @@ function manual_wp_edd_fields () {
 			'desc' => __('body_mail_desc', 'manual_edd_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
 			'type' => 'rich_editor',
 		),
-		// bumbum
-		array(
-			'id' => 'manual_edd_wp_post_receipt',
-			'name' => __( 'transfer_receipt', 'manual_edd_wp_plugin' ),
-			'desc' => __('transfer_receipt_desc', 'manual_edd_wp_plugin'),// . '<br/>' . edd_get_emails_tags_list()  ,
-			'type' => 'rich_editor',
-		),
-		//
 	);
 
 	return $manual_gateway_settings;
