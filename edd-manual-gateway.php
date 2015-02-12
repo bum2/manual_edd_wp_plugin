@@ -1,22 +1,22 @@
 <?php
 /*
 Plugin Name: Easy Digital Downloads - Manual Purchase Gateway
-Plugin URL:
-Description: A manual 'wire transfer' gateway for Easy Digital Downloads by Hackafou, adapted by Bumbum to meet getfaircoin.net requirements.
-Version: 0.1.1
+Plugin URL: https://github/bum2/edd-manual-gateway
+Description: The manual 'wire transfer' gateway for Easy Digital Downloads by Hackafou, adapted by Bumbum to join Marketify and meet getfaircoin.net requirements.
+Version: 0.2
 Author: Bumbum
 Author URI: https://github.com/bum2
 */
 
 //Language
-load_plugin_textdomain( 'manual_edd_wp_plugin', false,  dirname(plugin_basename(__FILE__)) . '/languages/' );
+load_plugin_textdomain( 'edd-manual-gateway', false,  dirname(plugin_basename(__FILE__)) . '/languages/' );
 
 //Load post fields management
-require_once ( __DIR__ . '/manual_edd_wp_post.php');
+require_once ( __DIR__ . '/edd-manual-gateway-post.php');
 
 //Registers the gateway
 function manual_wp_edd_register_gateway( $gateways ) {
-	$gateways['transfer'] = array( 'admin_label' => 'WireTransfer (manual)', 'checkout_label' => __( 'Wire Transfer', 'manual_edd_wp_plugin' ) );
+	$gateways['transfer'] = array( 'admin_label' => 'WireTransfer (manual)', 'checkout_label' => __( 'Wire Transfer', 'edd-manual-gateway' ) );
 	return $gateways;
 }
 add_filter( 'edd_payment_gateways', 'manual_wp_edd_register_gateway' );
@@ -85,57 +85,57 @@ function manual_wp_edd_add_settings ( $settings ) {
 	$manual_gateway_settings = array(
 		array(
 			'id' => 'manual_gateway_settings',
-			'name' => '<strong>' . __( 'Wire Transfer Settings', 'manual_edd_wp_plugin' ) . '</strong>',
-			'desc' => __( 'Settings to manage the manual payment gateway via wire transfer', 'manual_edd_wp_plugin' ),
+			'name' => '<strong>' . __( 'Wire Transfer Settings', 'edd-manual-gateway' ) . '</strong>',
+			'desc' => __( 'Settings to manage the manual payment gateway via wire transfer', 'edd-manual-gateway' ),
 			'type' => 'header'
 		),
 		array(
 			'id' => 'mgs_platform_IBAN',
-			'name' => __( 'platform_iban', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'platform_iban_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'platform_iban', 'edd-manual-gateway' ),
+			'desc' => __( 'platform_iban_desc', 'edd-manual-gateway' ),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'mgs_platform_BIN',
-			'name' => __( 'platform_bin', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'platform_bin_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'platform_bin', 'edd-manual-gateway' ),
+			'desc' => __( 'platform_bin_desc', 'edd-manual-gateway' ),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'mgs_one_or_multiple_IBAN',
-			'name' => __( 'one_multiple_accounts', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'one_multiple_accounts_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'one_multiple_accounts', 'edd-manual-gateway' ),
+			'desc' => __( 'one_multiple_accounts_desc', 'edd-manual-gateway' ),
 			'type' => 'select',
 			'options' => array(1 => 'ONE', 2 => 'MULTIPLE'),
 			'std'  => 1
 		),
 		array(
 			'id' => 'mgs_transfer_info',
-			'name' => __( 'transfer_info', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'transfer_info_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'transfer_info', 'edd-manual-gateway' ),
+			'desc' => __( 'transfer_info_desc', 'edd-manual-gateway' ),
 			'type' => 'rich_editor'
 		),
 		array(
 			'id' => 'mgs_from_email',
-			'name' => __( 'from_email', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'from_email_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'from_email', 'edd-manual-gateway' ),
+			'desc' => __( 'from_email_desc', 'edd-manual-gateway' ),
 			'type' => 'text',
 			'size' => 'regular',
 			'std'  => get_bloginfo( 'admin_email' )
 		),
 		array(
 			'id' => 'mgs_subject_mail',
-			'name' => __( 'subject_mail', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'subject_mail_desc', 'manual_edd_wp_plugin' )  . '<br/>' . edd_get_emails_tags_list(),
+			'name' => __( 'subject_mail', 'edd-manual-gateway' ),
+			'desc' => __( 'subject_mail_desc', 'edd-manual-gateway' )  . '<br/>' . edd_get_emails_tags_list(),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'mgs_body_mail',
-			'name' => __( 'body_mail', 'manual_edd_wp_plugin' ),
-			'desc' => __('body_mail_desc', 'manual_edd_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
+			'name' => __( 'body_mail', 'edd-manual-gateway' ),
+			'desc' => __('body_mail_desc', 'edd-manual-gateway') . '<br/>' . edd_get_emails_tags_list()  ,
 			'type' => 'rich_editor',
 		),
 
@@ -179,12 +179,12 @@ function manual_edd_setup_email_tags() {
 	$email_tags = array(
 		array(
 			'tag'         => 'IBAN',
-			'description' => __( 'preconfigured_IBAN', 'manual_edd_wp_plugin' ),
+			'description' => __( 'preconfigured_IBAN', 'edd-manual-gateway' ),
 			'function'    => 'edd_email_tag_IBAN'
 		),
 		array(
 			'tag'         => 'BIC',
-			'description' => __( 'preconfigured_BIC', 'manual_edd_wp_plugin' ),
+			'description' => __( 'preconfigured_BIC', 'edd-manual-gateway' ),
 			'function'    => 'edd_email_tag_BIC'
 		)
 	);
@@ -259,7 +259,7 @@ function manual_email_purchase_order ( $payment_id, $admin_notice = true ) {
 }
 
 //function edd_manual_payment_receipt_before($payment){
-//  echo _e("<p>Thanks! Your purchase order is registered. Here are the receipt details, so you can save or print them, but you'll also receive this information by email:<br /></p>", 'manual_edd_wp_plugin');
+//  echo _e("<p>Thanks! Your purchase order is registered. Here are the receipt details, so you can save or print them, but you'll also receive this information by email:<br /></p>", 'edd-manual-gateway');
 //}
 //add_action('edd_payment_receipt_before', 'edd_manual_payment_receipt_before');
 

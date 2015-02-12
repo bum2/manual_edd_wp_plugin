@@ -89,7 +89,7 @@ function manual_edd_wp_print_meta_box ( $post ) {
 
 function manual_edd_wp_show_post_fields ( $post) {
 
-	add_meta_box( $post->ID, __( "Manual Transfer Settings", 'manual_edd_wp_plugin'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
+	add_meta_box( $post->ID, __( "Manual Transfer Settings", 'edd-manual-gateway'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
 
 }
 add_action( 'submitpost_box', 'manual_edd_wp_show_post_fields' );
@@ -99,45 +99,45 @@ function manual_wp_edd_fields () {
 	$manual_gateway_settings = array(
 		array(
 			'id' => 'manual_edd_wp_post_IBAN',
-			'name' => __( 'platform_iban', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'platform_iban_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'platform_iban', 'edd-manual-gateway' ),
+			'desc' => __( 'platform_iban_desc', 'edd-manual-gateway' ),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'manual_edd_wp_post_BIN',
-			'name' => __( 'platform_bin', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'platform_bin_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'platform_bin', 'edd-manual-gateway' ),
+			'desc' => __( 'platform_bin_desc', 'edd-manual-gateway' ),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		// bumbum
 		array(
 			'id' => 'manual_edd_wp_post_receipt',
-			'name' => __( 'transfer_receipt', 'manual_edd_wp_plugin' ),
-			'desc' => __('transfer_receipt_desc', 'manual_edd_wp_plugin'),// . '<br/>' . edd_get_emails_tags_list()  ,
+			'name' => __( 'transfer_receipt', 'edd-manual-gateway' ),
+			'desc' => __('transfer_receipt_desc', 'edd-manual-gateway'),// . '<br/>' . edd_get_emails_tags_list()  ,
 			'type' => 'rich_editor',
 		),
 		//
 		array(
 			'id' => 'manual_edd_wp_post_from_email',
-			'name' => __( 'from_email', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'from_email_desc', 'manual_edd_wp_plugin' ),
+			'name' => __( 'from_email', 'edd-manual-gateway' ),
+			'desc' => __( 'from_email_desc', 'edd-manual-gateway' ),
 			'type' => 'text',
 			'size' => 'regular',
 			'std'  => get_bloginfo( 'admin_email' )
 		),
 		array(
 			'id' => 'manual_edd_wp_post_subject_mail',
-			'name' => __( 'subject_mail', 'manual_edd_wp_plugin' ),
-			'desc' => __( 'subject_mail_desc', 'manual_edd_wp_plugin' ),//  . '<br/>' . edd_get_emails_tags_list(),
+			'name' => __( 'subject_mail', 'edd-manual-gateway' ),
+			'desc' => __( 'subject_mail_desc', 'edd-manual-gateway' ),//  . '<br/>' . edd_get_emails_tags_list(),
 			'type' => 'text',
 			'size' => 'regular'
 		),
 		array(
 			'id' => 'manual_edd_wp_post_body_mail',
-			'name' => __( 'body_mail', 'manual_edd_wp_plugin' ),
-			'desc' => __('body_mail_desc', 'manual_edd_wp_plugin') . '<br/>' . edd_get_emails_tags_list()  ,
+			'name' => __( 'body_mail', 'edd-manual-gateway' ),
+			'desc' => __('body_mail_desc', 'edd-manual-gateway') . '<br/>' . edd_get_emails_tags_list()  ,
 			'type' => 'rich_editor',
 		),
 	);
