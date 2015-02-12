@@ -1,4 +1,4 @@
-edd_manual_gateway
+edd-manual-gateway
 ==================
 
 Description
@@ -18,22 +18,28 @@ Configuration
 	* Receipt info => Message that will be displayed on purchase, in the screen receipt (normally, same info as the email, but web page format)
 
 2) Set IBAN/BIC on each campaign-post (only if *One or multiple IBAN* is set to *MULTIPLE*). This is single edition of every campaign post on side bar box named *Campaign's purchase bank account*.
-  The main fields can be set in the post level:
+
+- The main fields can be set in the post level:
 	* IBAN/BIC
 	* Transfer Info
 	* User's Email (from, subject and body)
 	* Receipt Info
 
+3) Check the Settings -> Emails tab to find the admin notification email settings, general for all gateways (you can use all email_tags).
 
+ 
 Working flow
 --------------
 Once a *manual* purchase has been done, an email will be send to purchaser with *IBAN / BIC* information. The purchase will be marked as *pending* until admin confirms complete status through *Campaigns - Payment History*.
+
 
 Notice
 --------------
 You can use this plugin for literal manual purchases just adding some writing in the information mail. Once you receive the payment proceed the flow as explained.
 
+
 Contribute
 --------------
 original dev (hackafou): @BTC 1DNxbBeExzv7JvXgL6Up5BSUvuY4gE8q4A
+
 new fork (bum2): @FAIR fcnt4AN8DAAp9AoMZENJVHMRzR9rkVEsTx
