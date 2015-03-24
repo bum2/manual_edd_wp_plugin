@@ -40,6 +40,9 @@ You can use this plugin for literal manual purchases just adding some writing in
 
 Contribute
 --------------
-new fork (bum2): @FAIR fThesXCU7FfekYNNui2MtELfCNoa9pctJk / @BTC 13f5TfiYgWeqTFxfzwyraA1LUV6RMFjxnq
+fork dev (bum2): 
+- @FAIR fThesXCU7FfekYNNui2MtELfCNoa9pctJk
+- @BTC 13f5TfiYgWeqTFxfzwyraA1LUV6RMFjxnq
 
-original dev (hackafou): @BTC 1DNxbBeExzv7JvXgL6Up5BSUvuY4gE8q4A
+original dev (hackafou):
+- @BTC 1DNxbBeExzv7JvXgL6Up5BSUvuY4gE8q4A
