@@ -89,7 +89,7 @@ function manual_edd_wp_print_meta_box ( $post ) {
 
 function manual_edd_wp_show_post_fields ( $post) {
 
-	add_meta_box( $post->ID, __( "Manual Transfer Settings", 'edd-manual-gateway'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
+	add_meta_box( 'manual_transfer_'.$post->ID, __( "Manual Transfer Settings", 'edd-manual-gateway'), "manual_edd_wp_print_meta_box", 'download', 'normal', 'high');
 
 }
 add_action( 'submitpost_box', 'manual_edd_wp_show_post_fields' );

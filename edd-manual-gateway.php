@@ -39,7 +39,7 @@ add_action('edd_transfer_cc_form', 'edd_manual_gateway_cc_form');
 
 // processes the payment
 function manual_wp_edd_process_payment( $purchase_data ) {
-
+    global $edd_options;
 	// check for any stored errors
 	$errors = edd_get_errors();
 	if ( ! $errors ) {
@@ -250,7 +250,7 @@ function manual_email_purchase_order ( $payment_id, $admin_notice = true ) {
 	$headers = apply_filters( 'edd_receipt_headers', $headers, $payment_id, $payment_data );
 
 	if ( apply_filters( 'edd_email_purchase_receipt', true ) ) {
-		wp_mail( $to, $subject, $message, $headers, $attachments );
+		wp_mail( $to, $subject, $message, $headers);//, $attachments );
 	}
 
 	if ( $admin_notice && ! edd_admin_notices_disabled( $payment_id ) ) {
