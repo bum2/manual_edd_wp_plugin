@@ -1,0 +1,7 @@
+<wpml-config>
+  <admin-texts>
+    <key name="edd_settings">
+      <key name="mgs_transfer_info" />
+    </key>
+  </admin-texts>
+</wpml-config>
