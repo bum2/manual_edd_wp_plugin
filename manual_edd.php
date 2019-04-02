@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Easy Digital Downloads - Manual Purchase Gateway
-Plugin URL: 
+Plugin URL: https://github.com/bum2/manual_edd_wp_plugin 
 Description: A manual (transfers) gateway for Easy Digital Downloads
 Version: 0.2
 Author: Bumbum (forked from Hackafou)
