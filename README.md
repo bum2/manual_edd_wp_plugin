@@ -1,9 +1,9 @@
-edd-manual-gateway
+manual_edd_wp_plugin
 ==================
 
 Description
 --------------
-Easy Digital Downloads - Manual Purchase Gateway (designed to join Marketify and Fundify Astoundify), forked from https://github.com/aleph1888/manual_edd_wp_plugin and adapted to marketify for getfaircoin.net
+Easy Digital Downloads - Manual Purchase Gateway (designed to join Fundify Astoundify), forked from https://github.com/aleph1888/manual_edd_wp_plugin and adapted to fundify for coopfunding.net
 
 
 Configuration
